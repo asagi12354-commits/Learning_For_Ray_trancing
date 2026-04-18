@@ -130,30 +130,30 @@ flowchart LR
     *   **透视投影：** 齐次坐标的 $w$ 分量在透视投影中扮演了至关重要的角色，它用于实现“近大远小”的效果，我们会在投影变换中详细讨论。
 
 2.  **缩放矩阵 $S$：**
-    $S = \begin{pmatrix} s_x & 0 & 0 & 0 \\ 0 & s_y & 0 & 0 \\ 0 & 0 & s_z & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$
+    $$S = \begin{pmatrix} s_x & 0 & 0 & 0 \\ 0 & s_y & 0 & 0 \\ 0 & 0 & s_z & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
     *   **几何意义：** 这个矩阵很简单直观，它将顶点的 $x, y, z$ 坐标分别乘以对应的缩放因子 $s_x, s_y, s_z$。
     *   就像你用图片编辑软件调整图片大小一样，你可以单独拉伸宽度、高度或深度。如果 $s_x = s_y = s_z$，那就是等比例缩放。
 
 3.  **旋转矩阵 $R_x, R_y, R_z$：**
     文档中给出了围绕X、Y、Z轴旋转的矩阵。这些矩阵的推导基于**二维旋转公式**的扩展。
     *   **二维旋转回顾：** 在二维平面上，一个点 $(x, y)$ 绕原点逆时针旋转 $\theta$ 角后的新坐标 $(x', y')$ 可以表示为：
-        $x' = x \cos\theta - y \sin\theta$
-        $y' = x \sin\theta + y \cos\theta$
+        $$x' = x \cos\theta - y \sin\theta$$
+        $$y' = x \sin\theta + y \cos\theta$$
         对应的矩阵形式是：
-        $$\begin{pmatrix} x' \\ y' \end{pmatrix} = \begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix}$$
+        $\begin{pmatrix} x' \\ y' \end{pmatrix} = \begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix}$
     *   **扩展到三维：**
         *   **绕X轴旋转 $R_x$：** 当绕X轴旋转时，X坐标保持不变，Y和Z坐标在YZ平面上进行二维旋转。所以，X轴对应的行和列保持不变，YZ分量应用二维旋转矩阵。
-            $R_x = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta & 0 \\ 0 & \sin\theta & \cos\theta & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$
+            $$R_x = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta & 0 \\ 0 & \sin\theta & \cos\theta & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
         *   **绕Y轴旋转 $R_y$：** 类似地，绕Y轴旋转时，Y坐标不变，X和Z坐标在XZ平面上旋转。需要注意的是，为了保持右手坐标系，通常将Z轴视为“向上”，X轴视为“向右”，所以旋转方向会有所调整，导致 $\sin\theta$ 的符号变化。
-            $R_y = \begin{pmatrix} \cos\theta & 0 & \sin\theta & 0 \\ 0 & 1 & 0 & 0 \\ -\sin\theta & 0 & \cos\theta & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$
+            $$R_y = \begin{pmatrix} \cos\theta & 0 & \sin\theta & 0 \\ 0 & 1 & 0 & 0 \\ -\sin\theta & 0 & \cos\theta & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
         *   **绕Z轴旋转 $R_z$：** Z坐标不变，X和Y坐标在XY平面上旋转。
-            $R_z = \begin{pmatrix} \cos\theta & -\sin\theta & 0 & 0 \\ \sin\theta & \cos\theta & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$
+            $$R_z = \begin{pmatrix} \cos\theta & -\sin\theta & 0 & 0 \\ \sin\theta & \cos\theta & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
     *   **几何意义：** 想象你拿着一个地球仪，绕着它的轴心转动。绕X轴转就是让它“点头”或“仰头”，绕Y轴转就是让它“摇头”，绕Z轴转就是让它“自转”。
 
 4.  **平移矩阵 $T$：**
-    $T = \begin{pmatrix} 1 & 0 & 0 & t_x \\ 0 & 1 & 0 & t_y \\ 0 & 0 & 1 & t_z \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    $$T = \begin{pmatrix} 1 & 0 & 0 & t_x \\ 0 & 1 & 0 & t_y \\ 0 & 0 & 1 & t_z \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
     *   **几何意义：** 这个矩阵利用齐次坐标的 $w=1$ 特性，将平移量 $t_x, t_y, t_z$ 加到顶点的 $x, y, z$ 分量上。
-        $\begin{pmatrix} x' \\ y' \\ z' \\ 1 \end{pmatrix} = \begin{pmatrix} 1 & 0 & 0 & t_x \\ 0 & 1 & 0 & t_y \\ 0 & 0 & 1 & t_z \\ 0 & 0 & 0 & 1 \end{pmatrix} \begin{pmatrix} x \\ y \\ z \\ 1 \end{pmatrix} = \begin{pmatrix} x + t_x \\ y + t_y \\ z + t_z \\ 1 \end{pmatrix}$
+        $$\begin{pmatrix} x' \\ y' \\ z' \\ 1 \end{pmatrix} = \begin{pmatrix} 1 & 0 & 0 & t_x \\ 0 & 1 & 0 & t_y \\ 0 & 0 & 1 & t_z \\ 0 & 0 & 0 & 1 \end{pmatrix} \begin{pmatrix} x \\ y \\ z \\ 1 \end{pmatrix} = \begin{pmatrix} x + t_x \\ y + t_y \\ z + t_z \\ 1 \end{pmatrix}$$
     *   **几何意义：** 就像你在地图上移动一个标记点，只是简单地把它从一个位置搬到另一个位置，不改变它的方向和大小。
 
 5.  **组合模型变换矩阵 $M = T \cdot R \cdot S$：**
@@ -192,22 +192,22 @@ $\mathbf{v}_{view} = V \cdot \mathbf{v}_{world}$
 
 1.  **平移世界：** 将整个世界向相机位置的**反方向**平移，使得相机“回到”世界原点。
     平移矩阵 $T_{view}$：
-    $T_{view} = \begin{pmatrix} 1 & 0 & 0 & -e_x \\ 0 & 1 & 0 & -e_y \\ 0 & 0 & 1 & -e_z \\ 0 & 0 & 0 & 1 \end{pmatrix}$
+    $$T_{view} = \begin{pmatrix} 1 & 0 & 0 & -e_x \\ 0 & 1 & 0 & -e_y \\ 0 & 0 & 1 & -e_z \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
     其中 $\mathbf{e} = (e_x, e_y, e_z)$ 是相机在世界空间中的位置。
 
 2.  **旋转世界：** 将整个世界旋转，使得相机的朝向与相机坐标系的Z轴负方向对齐，相机的上方向与相机坐标系的Y轴对齐，相机的右方向与相机坐标系的X轴对齐。
     为了构建这个旋转矩阵 $R_{view}$，我们需要先确定相机坐标系的三个正交基向量：
     *   **相机Z轴 $\mathbf{z}$：** 指向相机后方，与观察方向相反。如果相机看的目标点是 $\mathbf{t}$，相机位置是 $\mathbf{e}$，那么观察方向是 $\mathbf{t} - \mathbf{e}$。所以 $\mathbf{z}$ 向量是 $(\mathbf{e} - \mathbf{t})$ 的单位向量。
-        $\mathbf{z} = \frac{\mathbf{e} - \mathbf{t}}{\vert \mathbf{e} - \mathbf{t} \vert}$
+        $$\mathbf{z} = \frac{\mathbf{e} - \mathbf{t}}{\vert \mathbf{e} - \mathbf{t} \vert}$$
     *   **相机X轴 $\mathbf{x}$：** 指向相机右方。它必须垂直于相机的上方向 $\mathbf{up}$ 和相机的Z轴 $\mathbf{z}$。通过叉乘可以得到。
-        $\mathbf{x} = \frac{\mathbf{up} \times \mathbf{z}}{\vert \mathbf{up} \times \mathbf{z} \vert}$
+        $$\mathbf{x} = \frac{\mathbf{up} \times \mathbf{z}}{\vert \mathbf{up} \times \mathbf{z} \vert}$$
         这里需要注意，$\mathbf{up}$ 向量是世界空间中的一个“向上”的参考向量，它不一定是相机最终的Y轴，只是用来辅助确定相机X轴和Y轴的。
     *   **相机Y轴 $\mathbf{y}$：** 指向相机上方。它必须垂直于相机X轴 $\mathbf{x}$ 和Z轴 $\mathbf{z}$。
-        $\mathbf{y} = \mathbf{z} \times \mathbf{x}$
+        $$\mathbf{y} = \mathbf{z} \times \mathbf{x}$$
         （注意这里是 $\mathbf{z} \times \mathbf{x}$ 而不是 $\mathbf{x} \times \mathbf{z}$，以确保右手坐标系。）
 
     有了这三个相互垂直的单位向量 $\mathbf{x}, \mathbf{y}, \mathbf{z}$，它们就构成了相机坐标系的基。将世界空间中的点转换到相机空间，实际上就是将世界空间中的点投影到这三个基向量上。这个旋转矩阵 $R_{view}$ 的每一行就是这些基向量的转置：
-    $R_{view} = \begin{pmatrix} x_x & x_y & x_z & 0 \\ y_x & y_y & y_z & 0 \\ z_x & z_y & z_z & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$
+    $$R_{view} = \begin{pmatrix} x_x & x_y & x_z & 0 \\ y_x & y_y & y_z & 0 \\ z_x & z_y & z_z & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
     其中 $(x_x, x_y, x_z)$ 是 $\mathbf{x}$ 的分量，以此类推。
 
 
@@ -253,16 +253,16 @@ $\mathbf{v}_{view} = V \cdot \mathbf{v}_{world}$
 **推导步骤：**
 
 1.  **平移到中心：** 首先，我们需要将这个长方体的中心平移到原点。长方体的中心坐标是 $(\frac{l+r}{2}, \frac{b+t}{2}, \frac{n+f}{2})$。所以，我们需要向负方向平移这些距离。
-    $T_{ortho} = \begin{pmatrix} 1 & 0 & 0 & -\frac{l+r}{2} \\ 0 & 1 & 0 & -\frac{b+t}{2} \\ 0 & 0 & 1 & -\frac{n+f}{2} \\ 0 & 0 & 0 & 1 \end{pmatrix}$
+    $$T_{ortho} = \begin{pmatrix} 1 & 0 & 0 & -\frac{l+r}{2} \\ 0 & 1 & 0 & -\frac{b+t}{2} \\ 0 & 0 & 1 & -\frac{n+f}{2} \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
     *   **几何意义：** 就像你有一个盒子，你把它搬到房间的正中央。
 
 2.  **缩放到标准尺寸：** 接着，我们需要将这个长方体缩放到边长为2的标准立方体（NDC空间范围是 $[-1, 1]$）。长方体的宽度是 $(r-l)$，高度是 $(t-b)$，深度是 $(n-f)$。为了映射到 $[-1, 1]$，我们需要将宽度缩放 $2/(r-l)$，高度缩放 $2/(t-b)$，深度缩放 $2/(n-f)$。
-    $S_{ortho} = \begin{pmatrix} \frac{2}{r-l} & 0 & 0 & 0 \\ 0 & \frac{2}{t-b} & 0 & 0 \\ 0 & 0 & \frac{2}{n-f} & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$
+    $$S_{ortho} = \begin{pmatrix} \frac{2}{r-l} & 0 & 0 & 0 \\ 0 & \frac{2}{t-b} & 0 & 0 \\ 0 & 0 & \frac{2}{n-f} & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
     *   **人性化：** 你把盒子搬到中央后，再把它拉伸或压缩，让它的尺寸变成一个标准的单位盒子。
 
 3.  **组合正交投影矩阵 $P_{ortho} = S_{ortho} \cdot T_{ortho}$：**
     将这两个矩阵相乘，就得到了最终的正交投影矩阵。
-    $\begin{pmatrix} x_{clip} \\ y_{clip} \\ z_{clip} \\ w_{clip} \end{pmatrix} = \begin{pmatrix} \frac{2}{r-l} & 0 & 0 & -\frac{l+r}{r-l} \\ 0 & \frac{2}{t-b} & 0 & -\frac{b+t}{t-b} \\ 0 & 0 & \frac{2}{n-f} & -\frac{n+f}{n-f} \\ 0 & 0 & 0 & 1 \end{pmatrix} \cdot \begin{pmatrix} x_v \\ y_v \\ z_v \\ 1 \end{pmatrix}$
+    $$\begin{pmatrix} x_{clip} \\ y_{clip} \\ z_{clip} \\ w_{clip} \end{pmatrix} = \begin{pmatrix} \frac{2}{r-l} & 0 & 0 & -\frac{l+r}{r-l} \\ 0 & \frac{2}{t-b} & 0 & -\frac{b+t}{t-b} \\ 0 & 0 & \frac{2}{n-f} & -\frac{n+f}{n-f} \\ 0 & 0 & 0 & 1 \end{pmatrix} \cdot \begin{pmatrix} x_v \\ y_v \\ z_v \\ 1 \end{pmatrix}$$
     这里 $w_{clip}$ 始终为1，因为正交投影没有透视效果，不需要 $w$ 分量来做透视除法。
 
 #### 2. 透视投影（Perspective Projection）
@@ -289,8 +289,8 @@ $\mathbf{v}_{view} = V \cdot \mathbf{v}_{world}$
 
 关键的几何观察是：在透视投影中，一个点 $(x_v, y_v, z_v)$ 在近裁剪面上的投影点 $(x_p, y_p)$ 满足相似三角形原理。
 如果近裁剪面在 $z=n$ 处，那么：
-$x_p = x_v \cdot \frac{n}{z_v}$
-$y_p = y_v \cdot \frac{n}{z_v}$
+$$x_p = x_v \cdot \frac{n}{z_v}$$
+$$y_p = y_v \cdot \frac{n}{z_v}$$
 注意，相机空间中 $z_v$ 是负值，$n$ 也是负值，所以 $n/z_v$ 是一个正数，且当 $|z_v|$ 越大（越远），$n/z_v$ 越小，投影点越靠近中心，体现了“近大远小”。
 
 为了用矩阵乘法实现这种除法，我们需要利用齐次坐标的 $w$ 分量。我们希望最终的 $w_{clip}$ 等于 $-z_v$（或者 $z_v$，取决于坐标系定义）。
@@ -301,9 +301,9 @@ $y_p = y_v \cdot \frac{n}{z_v}$
 *   $w_{clip} = -z_v$
 
 这个挤压变换矩阵 $M_{persp}$ 如下：
-$M_{persp} = \begin{pmatrix} n & 0 & 0 & 0 \\ 0 & n & 0 & 0 \\ 0 & 0 & n+f & -n \cdot f \\ 0 & 0 & 1 & 0 \end{pmatrix}$
+$$M_{persp} = \begin{pmatrix} n & 0 & 0 & 0 \\ 0 & n & 0 & 0 \\ 0 & 0 & n+f & -n \cdot f \\ 0 & 0 & 1 & 0 \end{pmatrix}$$
 让我们验证一下它如何作用于一个相机空间顶点 $\mathbf{v}_{view} = (x_v, y_v, z_v, 1)$：
-$\begin{pmatrix} x' \\ y' \\ z' \\ w' \end{pmatrix} = \begin{pmatrix} n & 0 & 0 & 0 \\ 0 & n & 0 & 0 \\ 0 & 0 & n+f & -n \cdot f \\ 0 & 0 & 1 & 0 \end{pmatrix} \begin{pmatrix} x_v \\ y_v \\ z_v \\ 1 \end{pmatrix} = \begin{pmatrix} n \cdot x_v \\ n \cdot y_v \\ (n+f)z_v - n \cdot f \\ z_v \end{pmatrix}$
+$$\begin{pmatrix} x' \\ y' \\ z' \\ w' \end{pmatrix} = \begin{pmatrix} n & 0 & 0 & 0 \\ 0 & n & 0 & 0 \\ 0 & 0 & n+f & -n \cdot f \\ 0 & 0 & 1 & 0 \end{pmatrix} \begin{pmatrix} x_v \\ y_v \\ z_v \\ 1 \end{pmatrix} = \begin{pmatrix} n \cdot x_v \\ n \cdot y_v \\ (n+f)z_v - n \cdot f \\ z_v \end{pmatrix}$$
 现在，我们得到了一个齐次坐标 $(n \cdot x_v, n \cdot y_v, (n+f)z_v - n \cdot f, z_v)$。
 在后续的齐次除法中，我们会将 $x', y', z'$ 分别除以 $w'$，即 $z_v$。
 *   $x_{ndc} = \frac{n \cdot x_v}{z_v}$
@@ -348,9 +348,9 @@ $r = t \cdot aspect$
 **核心原理：** 裁剪空间中的顶点是齐次坐标 $(x_{clip}, y_{clip}, z_{clip}, w_{clip})$。齐次除法的目的就是将 $x, y, z$ 分量都除以 $w$ 分量，从而得到非齐次坐标，也就是归一化设备坐标（NDC）。
 
 **详细公式：**
-$x_{ndc} = \frac{x_{clip}}{w_{clip}}$
-$y_{ndc} = \frac{y_{clip}}{w_{clip}}$
-$z_{ndc} = \frac{z_{clip}}{w_{clip}}$
+$$x_{ndc} = \frac{x_{clip}}{w_{clip}}$$
+$$y_{ndc} = \frac{y_{clip}}{w_{clip}}$$
+$$z_{ndc} = \frac{z_{clip}}{w_{clip}}$$
 
 **推导说明：**
 *   **透视除法：** 在透视投影中，$w_{clip}$ 实际上是相机空间中的 $-z_v$（或 $z_v$）。所以，齐次除法就是将 $x_v, y_v$ 除以 $z_v$，这正是实现透视效果的关键。
@@ -377,16 +377,16 @@ $z_{ndc} = \frac{z_{clip}}{w_{clip}}$
 
 2.  **$[0, 1]$ 映射到屏幕像素坐标：**
     *   **X方向：** 屏幕的X坐标范围是 $[0, width-1]$。
-        $x_{screen} = x_{norm} \times (width - 1)$
+        $$x_{screen} = x_{norm} \times (width - 1)$$
         （注意这里是 `width - 1`，因为像素索引从0开始）。
     *   **Y方向：** 这里有一个重要的细节：NDC的Y轴通常是向上的，而屏幕像素的Y轴通常是向下的。所以我们需要翻转Y轴。
-        $y_{screen} = (1 - y_{norm}) \times (height - 1)$
+        $$y_{screen} = (1 - y_{norm}) \times (height - 1)$$
     *   **为什么是 $1 - y_{norm}$？** 如果 $y_{ndc} = 1$（NDC最上方），那么 $y_{norm} = 1$。经过 $1 - y_{norm}$ 后变成 0，对应屏幕最上方。如果 $y_{ndc} = -1$（NDC最下方），那么 $y_{norm} = 0$。经过 $1 - y_{norm}$ 后变成 1，对应屏幕最下方。这样就实现了Y轴的翻转。
 
 3.  **组合视口映射完整公式：**
     将上述两步结合起来，得到最终的屏幕像素坐标：
-    $x_{screen} = \frac{x_{ndc} + 1}{2} \times (width - 1)$
-    $y_{screen} = \frac{1 - y_{ndc}}{2} \times (height - 1)$
+    $$x_{screen} = \frac{x_{ndc} + 1}{2} \times (width - 1)$$
+    $$y_{screen} = \frac{1 - y_{ndc}}{2} \times (height - 1)$$
 
 **最终结果：** 屏幕空间像素坐标 $(x_{screen}, y_{screen})$，以及 NDC 中的 $z_{ndc}$ 作为深度值。这些信息将传递给光栅化阶段。
 
@@ -443,21 +443,21 @@ $$\text{Area}(A, B, C) = \frac{1}{2} ((x_b - x_a)(y_c - y_a) - (x_c - x_a)(y_b -
 
 所以，
 *   **三角形 $V_0 V_1 V_2$ 的面积 $A$：**
-    $A = \frac{1}{2} \vert (x_1 - x_0)(y_2 - y_0) - (y_1 - y_0)(x_2 - x_0) \vert$
+    $$A = \frac{1}{2} \vert (x_1 - x_0)(y_2 - y_0) - (y_1 - y_0)(x_2 - x_0) \vert$$
 *   **子三角形 $P V_1 V_2$ 的面积 $A_0$：**
-    $A_0 = \frac{1}{2} \vert (x_1 - x)(y_2 - y) - (y_1 - y)(x_2 - x) \vert$   
+    $$A_0 = \frac{1}{2} \vert (x_1 - x)(y_2 - y) - (y_1 - y)(x_2 - x) \vert$$
 *   **子三角形 $P V_0 V_2$ 的面积 $A_1$：**
-    $A_1 = \frac{1}{2} \vert (x_0 - x)(y_2 - y) - (y_0 - y)(x_2 - x) \vert$
+    $$A_1 = \frac{1}{2} \vert (x_0 - x)(y_2 - y) - (y_0 - y)(x_2 - x) \vert$$
 *   **子三角形 $P V_0 V_1$ 的面积 $A_2$：**
-    $A_2 = \frac{1}{2} \vert (x_0 - x)(y_1 - y) - (y_0 - y)(x_1 - x) \vert$
+    $$A_2 = \frac{1}{2} \vert (x_0 - x)(y_1 - y) - (y_0 - y)(x_1 - x) \vert$$
 
 **重心坐标：**
-$u = \frac{A_0}{A}, \quad v = \frac{A_1}{A}, \quad w = \frac{A_2}{A}$
+$$u = \frac{A_0}{A}, \quad v = \frac{A_1}{A}, \quad w = \frac{A_2}{A}$$
 
 **属性插值：**
 一旦我们计算出像素 $P$ 的重心坐标 $(u, v, w)$，就可以用它们来插值任何顶点属性。
 例如，如果我们要插值深度值 $z$：
-$z_P = u \cdot z_0 + v \cdot z_1 + w \cdot z_2$
+$$z_P = u \cdot z_0 + v \cdot z_1 + w \cdot z_2$$
 其中 $z_0, z_1, z_2$ 分别是顶点 $V_0, V_1, V_2$ 的深度值。
 同理，颜色、纹理坐标、法向量等属性，都可以用这个公式进行插值。
 
@@ -516,7 +516,7 @@ $z_P = u \cdot z_0 + v \cdot z_1 + w \cdot z_2$
 **公式说明的深入解析：**
 
 文档中给出的深度比较核心逻辑是：
-$\text{if } z_{pixel} < z_{buffer} \implies z_{buffer} = z_{pixel}, \ color_{buffer} = color_{pixel}$
+$$\text{if } z_{pixel} < z_{buffer} \implies z_{buffer} = z_{pixel}, \ color_{buffer} = color_{pixel}$$
 
 这里我们深入理解其中的细节：
 
@@ -544,7 +544,7 @@ $\text{if } z_{pixel} < z_{buffer} \implies z_{buffer} = z_{pixel}, \ color_{buf
 文档中提到了NDC中的 $z_{ndc}$ 范围是 $[-1, 1]$，但实际存储通常映射到 $[0, 1]$。
 
 **映射公式：**
-$z_{buffer} = \frac{z_{ndc} + 1}{2}$
+$$z_{buffer} = \frac{z_{ndc} + 1}{2}$$
 
 **为什么需要映射？**
 *   **硬件兼容性：** 大多数图形硬件的深度缓存使用无符号整数来存储深度值。将 $z_{ndc}$ 从 $[-1, 1]$ 映射到 $[0, 1]$ 使得它能够直接对应无符号整数的存储范围（例如，16位无符号整数可以表示 $0$ 到 $65535$）。
@@ -642,7 +642,7 @@ MSAA是SSAA的一种优化，旨在减少性能开销，同时保持良好的反
 2.  **单次像素着色：** 对于一个像素，无论它有多少个子采样点被覆盖，**像素着色器只运行一次**（通常在像素的中心位置）。
 3.  **颜色混合：** 在像素着色完成后，MSAA会根据子采样点的覆盖情况，将着色结果与背景颜色进行加权平均。
     *   **公式说明（以2×2 MSAA为例）：** 设像素内4个子采样点中，有 $k$ 个在三角形内部。
-        $color_{final} = \frac{k}{4} \cdot color_{pixel} + \frac{4 - k}{4} \cdot color_{background}$
+        $$color_{final} = \frac{k}{4} \cdot color_{pixel} + \frac{4 - k}{4} \cdot color_{background}$$
         其中 $color_{pixel}$ 是像素中心着色得到的颜色，$color_{background}$ 是背景颜色。
     *   **人性化：** 就像打印机只计算一次墨水颜色，但它会根据曲线覆盖像素的比例，来决定用多少墨水颜色和多少纸张颜色来填充这个像素。
 
@@ -673,8 +673,6 @@ FXAA是一种**后处理**反走样技术。它不修改渲染管线中的几何
 **劣势：**
 *   **效果不如MSAA/SSAA：** 由于是后处理，它无法获取到原始的几何信息，只能根据像素颜色来推断边缘，因此可能会导致边缘过度模糊，或者在某些情况下无法完全消除锯齿。
 *   可能会模糊一些不应该模糊的细节。
-
-
 
 
 #### 4. 深度缓存的优化技巧（提升渲染效率）
